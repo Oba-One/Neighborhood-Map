@@ -1,25 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Neighborhood Map</title>
+  <!--Required Meta Tags-->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!--Personal & Bootstrap CSS-->
+  <!-- Compiled and minified CSS -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  
+  <title>Neighborhood Map Project</title>
 </head>
 <body>
+
+  <!--Header with Navbar-->
+  <header class="navbar">
+    <nav class="nav-wrapper" >
+      <ul class="container">
+        <li class="left"><a class="brand-logo" href=""> Neighborhood Map</a></li>
+        <li class="right hide-on-small-only"><a class="btn" href="">Login</a></li>
+        <li class="hide-on-large-only hide-on-small-only"><a class="btn" href="">View Locations</a></li>
+        <a href="#" class="sidenav-trigger show-on-small" data-target="location-list-mobile">
+            <i class="material-icons">menu</i>
+          </a>
+      </ul>
+      
+    </nav>
+  </header>
+
+  <!--Body with Map & Sidebar-->
+  <main class="row" style="height: 85vh ; width: 100% ; ">
+
+    <!--Sidebar with Locations & Search Filter-->
+    <aside class="hide-on-med-and-down col s3 red" style=" height:100%;">
+
+    </aside>
+
+    <!--Google Map with Location Markers-->
+    <section class="map_container col s9 teal">
+      <div id="map">
+
+      </div>
+    </section>
+
+  </main>
+
+  <!--Footer with Social Links-->
+  <footer class="page-footer blue" style="height: 10vh ;">
     <div class="container">
-        <header>
-            Nav Bar For Login & Profile
-        </header>
-        <main>
-            <aside>List of Locations & Filters</aside>
-            <section>Google Map</section>
-        </main>
-        <footer>
-            Footer 
-        </footer>
+      <a href="">Github</a>
+      <a href="">Linkedin</a>
     </div>
-    <script src="assets/js/lib/knockout-3.4.2.js"></script>
-    <script src="assets/js/app.js"></script>
+  </footer>
+
+  <!--Knockout, Jquery, Bootstrap, Google Maps, & Personal App Javascript-->
+  <div id="Javascript">
+    <script
+      src="assets/js/lib/knockout-3.4.2.js" >
+    </script>
+    <script
+      src="assets/js/lib/jquery-3.3.1.min.js">
+    </script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+    <script
+      src="assets/js/app.js">
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCsW0ZcgyupqWcJmlcbz7escetwpOCm40&libraries=geometry&v=3&callback=initMap"
+      onerror="googleMapError()">
+    </script>
+    <script>
+      $(document).ready(function(){
+        $('.sidenav').sidenav();
+      });
+    </script>
+  </div>
 </body>
 </html>
