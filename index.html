@@ -15,7 +15,6 @@
   <title>Neighborhood Map Project</title>
 </head>
 <body>
-
   <!--Header with Navbar-->
   <header class="navbar">
     <nav class="nav-wrapper" >
@@ -30,45 +29,51 @@
       
     </nav>
   </header>
-
   <!--Body with Map & Sidebar-->
-  <main class="row" style="height: 85vh ; width: 100% ; ">
-
+  <main class=" row main__body">
     <!--Sidebar with Locations & Search Filter-->
-    <aside class="hide-on-med-and-down col s3 red" style=" height:100%;">
-
+    <aside class="hide-on-med-and-down col l3 m2 s0 red">
+      <h4>Locations</h4>
+      <input class="" data-bind="" type="text" placeholder="Filter Locations...">
+      <ul class="" data-bind="foreach: locationList">
+        <li class="" data-bind="text: title, click:"></li>
+      </ul>
     </aside>
-
+    <aside id="location-list-mobile" class="red sidenav">
+    </aside>
     <!--Google Map with Location Markers-->
-    <section class="map_container col s9 teal">
+    <section class="map_container col l9 m10 s12 teal">
       <div id="map">
-
       </div>
     </section>
-
   </main>
-
   <!--Footer with Social Links-->
-  <footer class="page-footer blue" style="height: 10vh ;">
+  <footer class="page-footer blue">
     <div class="container">
       <a href="">Github</a>
       <a href="">Linkedin</a>
     </div>
   </footer>
 
-  <!--Knockout, Jquery, Bootstrap, Google Maps, & Personal App Javascript-->
+  <!--Javascript -->
   <div id="Javascript">
+    <!--Knockout JS -->
     <script
       src="assets/js/lib/knockout-3.4.2.js" >
     </script>
+    <!--jQuery -->
     <script
       src="assets/js/lib/jquery-3.3.1.min.js">
     </script>
+    <!--Materialize JS -->
     <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+      src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js">
+    </script>
+    <!--App JS -->
     <script
       src="assets/js/app.js">
     </script>
+    <!--Google Maps -->
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCsW0ZcgyupqWcJmlcbz7escetwpOCm40&libraries=geometry&v=3&callback=initMap"
       onerror="googleMapError()">
