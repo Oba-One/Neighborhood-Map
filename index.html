@@ -34,9 +34,9 @@
     <!--Sidebar with Locations & Search Filter-->
     <aside class="hide-on-med-and-down col l3 m2 s0 red">
       <h4>Locations</h4>
-      <input class="" data-bind="" type="text" placeholder="Filter Locations...">
+      <input class="" data-bind="textInput: searchItem, vslueUpdate: 'afterkeydown'" type="text" placeholder="Filter Locations...">
       <ul class="" data-bind="foreach: locationList">
-        <li class="" data-bind="text: title, click:"></li>
+        <li class="" data-bind="text: title, click: show"></li>
       </ul>
     </aside>
     <aside id="location-list-mobile" class="red sidenav">

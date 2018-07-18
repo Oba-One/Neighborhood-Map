@@ -49,11 +49,19 @@ var foursquareApi = function(data) {
       self.street = response.location.formattedAddress[0] ? response.location.formattedAddress[0]: 'N/A';
       self.city = response.location.formattedAddress[1] ? response.location.formattedAddress[1]: 'N/A';
       self.phone = response.contact.formattedPhone ? response.contact.formattedPhone : 'N/A';
+
+      self.htmlContentFoursquare =
+        '<div>' +
+        '<h6 class=""> Address: </h6>' +
+        '<p class="">' + self.street + '</p>' +
+        '<p class="">' + self.city + '</p>' +
+        '<p class="">' + self.phone + '</p>' +
+        '<p class="">' + self.country + '</p>' +   
+        '</div>';
    
   }).fail(function() {
       alert('Something went wrong with foursquare');
   });
-  console.log(response)
 }
 
 
@@ -171,7 +179,7 @@ function populateInfoWindow(marker, infowindow) {
         var nearStreetViewLocation = data.location.latLng;
         var heading = google.maps.geometry.spherical.computeHeading(
           nearStreetViewLocation, marker.position);
-          infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
+          infowindow.setContent('<div>' + marker.title + '</div>         <div>' + self.htmlContentFoursquare +' </div><div id="pano"></div>');
           var panoramaOptions = {
             position: nearStreetViewLocation,
             pov: {
@@ -193,3 +201,34 @@ function populateInfoWindow(marker, infowindow) {
     infowindow.open(map, marker);
   }
 }  
+
+// Thus variable binds the locations to a filter for searching through locations list
+var ViewModel = function() {
+  var self = this;
+
+  this.searchItem = ko.observable('');
+
+  this.mapList = ko.observableArray([]);
+
+  // add location markers for each location
+  locations.forEach(function(location) {
+      self.mapList.push( new LocationMarker(location) );
+  });
+
+  // locations viewed on map
+  this.locationList = ko.computed(function() {
+      var searchFilter = self.searchItem().toLowerCase();
+      if (searchFilter) {
+          return ko.utils.arrayFilter(self.mapList(), function(location) {
+              var str = location.title.toLowerCase();
+              var result = str.includes(searchFilter);
+              location.visible(result);
+      return result;
+    });
+      }
+      self.mapList().forEach(function(location) {
+          location.visible(true);
+      });
+      return self.mapList();
+  }, self);
+};
