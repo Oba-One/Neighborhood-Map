@@ -18,217 +18,143 @@ var locations = [
   {title: 'La Jolla Coves', location: {lat: 32.850603, lng: -117.271426}},
   {title: 'Isla Vista', location: {lat: 34.413329, lng: -119.860972}}
   ];
-// Variable for Markers populated by Location Array
-var markers = [];
+// Google Map Styles
+var styles = [
+  
+];
 // Variables containing Foursquare ClientID
 var clientID = "NZYK53GDY1DSWTJVOUIFMDJGGO1ZIRXFZJFUHWULJ4WO2250";
 // Variable containing Foursquare Client Secret
 var clientSecret = "AXKEYGI1BNKUQ312DGFJSFDF4BSEAVLDSTZZO4Y44PTDMPOG";
 
-/**************************
-    FOURSQUARE API
- *************************/
-var foursquareApi = function(data) {
-
-  var self = this;
-
-  this.title = data.title;
-  this.position = data.location;
-  this.street = '',
-  this.city = '',
-  this.phone = '';
-
-  this.visible = ko.observable(true);  
-
-  // Foursquare Request URL
-  var reqURL = 'https://api.foursquare.com/v2/venues/search?ll=' + this.position.lat + ',' + this.position.lng + '&client_id=' + clientID + '&client_secret=' + clientSecret + '&v=20180118' + '&query=' + this.title;
-
-  // Foursqaure API Data
-  $.getJSON(reqURL).done(function(data) {
-  var response = data.response.venues[0];
-      self.street = response.location.formattedAddress[0] ? response.location.formattedAddress[0]: 'N/A';
-      self.city = response.location.formattedAddress[1] ? response.location.formattedAddress[1]: 'N/A';
-      self.phone = response.contact.formattedPhone ? response.contact.formattedPhone : 'N/A';
-
-      self.htmlContentFoursquare =
-        '<div>' +
-        '<h6 class=""> Address: </h6>' +
-        '<p class="">' + self.street + '</p>' +
-        '<p class="">' + self.city + '</p>' +
-        '<p class="">' + self.phone + '</p>' +
-        '<p class="">' + self.country + '</p>' +   
-        '</div>';
-   
-  }).fail(function() {
-      alert('Something went wrong with foursquare');
-  });
-}
-
-
 
 /**************************
-    GOOOGLE MAP API
- *************************/
-function initMap() {
-  // Constructor creates a new map - only center and zoom are required.
-  map = new google.maps.Map(document.getElementById('map'), {
-      center: {lat: 34.048347, lng: -117.261153},
-      zoom: 8.7
-  });
-  // Map Info Window Variable
-  var largeInfowindow = new google.maps.InfoWindow();
-  // Default Marker Color Variable
-  var defaultIcon = makeMarkerIcon('0091ff');
-  // Highlighted Marker Color Variable
-  var highlightedIcon = makeMarkerIcon('FFFF24');
-  // Location Array transformed to Marker Array 
-  for (var i = 0; i < locations.length; i++) {
-    // Get the position from the location array.
-    var position = locations[i].location;
-    var title = locations[i].title;
-    // Create a marker per location, and put into markers array.
-    var marker = new google.maps.Marker({
-      map: map,
-      position: position,
-      title: title,
-      icon: defaultIcon,
-      animation: google.maps.Animation.DROP,
-      id: i
-    });
-    // Pushes Marker to Markers Array
-    markers.push(marker);
-    // Opens Marker Info Window
-    marker.addListener('click', function() {
-      populateInfoWindow(this, largeInfowindow);
-    });
-    // Highlight Marker On Hover
-    marker.addListener('mouseover', function() {
-      this.setIcon(highlightedIcon);
-    });
-    // Default Marker Color Display
-    marker.addListener('mouseout', function() {
-      this.setIcon(defaultIcon);
-    });
-  }
-  // This function takes in a COLOR, and then creates a new marker
-  function makeMarkerIcon(markerColor) {
-    var markerImage = new google.maps.MarkerImage(
-      'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
-      '|40|_|%E2%80%A2',
-      new google.maps.Size(27, 34),
-      new google.maps.Point(0, 0),
-      new google.maps.Point(12, 34),
-      new google.maps.Size(21,34));
-    return markerImage;
-  }
-}
-//If Error Initializing Map Occurs
-function googleError() {
-  alert('An error occurred with Google Maps!');
-}
-// This functions animates the marker giving a bounce
-function toggleBounce(marker) {
-  if (marker.getAnimation() !== null) {
-      marker.setAnimation(null);
-  } else {
-      marker.setAnimation(google.maps.Animation.BOUNCE);
-      setTimeout(function() {
-          marker.setAnimation(null);
-      }, 1400);
-  }
-}
-// This function will loop through the markers array and display them all.
-function showListings() {
-  var bounds = new google.maps.LatLngBounds();
-  // Extend the boundaries of the map for each marker and display the marker
-  for (var i = 0; i < markers.length; i++) {
-    markers[i].setMap(map);
-    bounds.extend(markers[i].position);
-  }
-  map.fitBounds(bounds);
-  }
-// This function will loop through the listings and hide them all.
-function hideListings() {
-  for (var i = 0; i < markers.length; i++) {
-    markers[i].setMap(null);
-  }
-}
-
-/**************************
-     APP VIEW MODEL
+         VIEW MODEL
  *************************/
 
-// This function populates the infowindow when a marker is clicked.
-function populateInfoWindow(marker, infowindow) {
-  // Check to make sure the infowindow is not already opened on this marker.
-  if (infowindow.marker != marker) {
-      infowindow.marker = marker;
-      infowindow.setContent('<div>' + marker.title + '</div>');
-      infowindow.open(map, marker);
-      // Make sure the marker property is cleared if the infowindow is closed.
-      infowindow.addListener('closeclick',function(){
-      infowindow.setMarker = null;
-    });
-    var streetViewService = new google.maps.StreetViewService();
-    var radius = 50;
-    // In case the status is OK, which means the pano was found, compute the
-    // position of the streetview image, then calculate the heading, then get a
-    // panorama from that and set the options
-  function getStreetView(data, status) {
-      if (status == google.maps.StreetViewStatus.OK) {
-        var nearStreetViewLocation = data.location.latLng;
-        var heading = google.maps.geometry.spherical.computeHeading(
-          nearStreetViewLocation, marker.position);
-          infowindow.setContent('<div>' + marker.title + '</div>         <div>' + self.htmlContentFoursquare +' </div><div id="pano"></div>');
-          var panoramaOptions = {
-            position: nearStreetViewLocation,
-            pov: {
-              heading: heading,
-              pitch: 27
+function AppViewModel() {
+    var self = this;
+
+    this.searchOption = ko.observable("");
+
+    // Variable for Markers populated by Locations Array
+    this.markers = [];
+
+    // This function populates the infowindow when the marker is clicked. We'll only allow
+    // one infowindow which will open at the marker that is clicked, and populate based
+    // on that markers position.
+    this.populateInfoWindow = function(marker, infowindow) {
+        if (infowindow.marker != marker) {
+            infowindow.setContent('');
+            infowindow.marker = marker;
+            // URL for Foursquare API
+            var apiUrl = 'https://api.foursquare.com/v2/venues/search?ll=' +
+                marker.lat + ',' + marker.lng + '&client_id=' + clientID +
+                '&client_secret=' + clientSecret + '&query=' + marker.title +
+                '&v=20170708' + '&m=foursquare';
+            // Foursquare API
+            $.getJSON(apiUrl).done(function(marker) {
+                var response = marker.response.venues[0];
+                self.street = response.location.formattedAddress[0];
+                self.city = response.location.formattedAddress[1];
+                self.zip = response.location.formattedAddress[3];
+                self.country = response.location.formattedAddress[4];
+                self.category = response.categories[0].shortName;
+
+                self.htmlContentFoursquare =
+                    '<h5 class="infoWindow__subtitle">' + self.category + '</h5>' + '<div class="infoWindow__paragraph">' +
+                    '<p>' + self.street + '</p>' +
+                    '<p>' + self.city + '</p>' +
+                    '</div>';
+
+                infowindow.setContent( self.htmlContent + self.htmlContentFoursquare);
+            }).fail(function() {
+                // Send alert
+                alert(
+                    "There was an issue loading the Foursquare API. Please refresh your page."
+                );
+            });
+
+            this.htmlContent = '<div>' + '<h4 class="infowWindow__title">' + marker.title +
+                '</h4>'+ '</div>';
+
+            infowindow.open(map, marker);
+
+            infowindow.addListener('closeclick', function() {
+                infowindow.marker = null;
+            });      
+        }
+    };
+
+    this.populateAndBounceMarker = function() {
+        self.populateInfoWindow(this, self.largeInfoWindow);
+        this.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout((function() {
+            this.setAnimation(null);
+        }).bind(this), 1400);
+    };
+
+    this.initMap = function() {
+        var mapCanvas = document.getElementById('map');
+        var mapOptions = {
+            center: new google.maps.LatLng(34.048347, -117.261153),
+            zoom: 9,
+            styles: styles
+        };
+        // Constructor creates a new map - only center and zoom are required.
+        map = new google.maps.Map(mapCanvas, mapOptions);
+
+        // Set InfoWindow
+        this.largeInfoWindow = new google.maps.InfoWindow();
+        for (var i = 0; i < locations.length; i++) {
+            this.markerTitle = locations[i].title;
+            this.markerLat = locations[i].location.lat;
+            this.markerLng = locations[i].location.lng;
+            // Google Maps marker setup
+            this.marker = new google.maps.Marker({
+                map: map,
+                position: {
+                    lat: this.markerLat,
+                    lng: this.markerLng
+                },
+                title: this.markerTitle,
+                lat: this.markerLat,
+                lng: this.markerLng,
+                id: i,
+                animation: google.maps.Animation.DROP
+            });
+            this.marker.setMap(map);
+            this.markers.push(this.marker);
+            this.marker.addListener('click', self.populateAndBounceMarker);
+        }
+    };
+
+    this.initMap();
+
+    // This block appends our locations to a list using data-bind
+    // It also serves to make the filter work
+    this.locationsFilter = ko.computed(function() {
+        var result = [];
+        for (var i = 0; i < this.markers.length; i++) {
+            var markerLocation = this.markers[i];
+            if (markerLocation.title.toLowerCase().includes(this.searchOption()
+                    .toLowerCase())) {
+                result.push(markerLocation);
+                this.markers[i].setVisible(true);
+            } else {
+                this.markers[i].setVisible(false);
             }
-          };
-        var panorama = new google.maps.StreetViewPanorama(
-          document.getElementById('pano'), panoramaOptions);
-      } else {
-        infowindow.setContent('<div>' + marker.title + '</div>' +
-          '<div>No Street View Found</div>');
-      }
-    }
-    // Use streetview service to get the closest streetview image within
-    // 50 meters of the markers position
-    streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
-    // Open the infowindow on the correct marker.
-    infowindow.open(map, marker);
-  }
-}  
+        }
+        return result;
+    }, this);
+}
 
-// Thus variable binds the locations to a filter for searching through locations list
-var ViewModel = function() {
-  var self = this;
-
-  this.searchItem = ko.observable('');
-
-  this.mapList = ko.observableArray([]);
-
-  // add location markers for each location
-  locations.forEach(function(location) {
-      self.mapList.push( new LocationMarker(location) );
-  });
-
-  // locations viewed on map
-  this.locationList = ko.computed(function() {
-      var searchFilter = self.searchItem().toLowerCase();
-      if (searchFilter) {
-          return ko.utils.arrayFilter(self.mapList(), function(location) {
-              var str = location.title.toLowerCase();
-              var result = str.includes(searchFilter);
-              location.visible(result);
-      return result;
-    });
-      }
-      self.mapList().forEach(function(location) {
-          location.visible(true);
-      });
-      return self.mapList();
-  }, self);
+googleMapError = function googleError() {
+  alert(
+      'Oops. Google Maps did not load. Please refresh the page.'
+  );
 };
+
+function startApp() {
+  ko.applyBindings(new AppViewModel());
+}

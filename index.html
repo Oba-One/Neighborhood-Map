@@ -5,84 +5,79 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-  <!--Personal & Bootstrap CSS-->
-  <!-- Compiled and minified CSS -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+  <!--Google Font-->
+  <link href="https://fonts.googleapis.com/css?family=Muli:600" rel="stylesheet">
+  <!--Bootstrap CSS-->
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+  <!--Custom CSS-->
   <link rel="stylesheet" href="assets/css/style.css">
   
   <title>Neighborhood Map Project</title>
 </head>
 <body>
-  <!--Header with Navbar-->
-  <header class="navbar">
-    <nav class="nav-wrapper" >
-      <ul class="container">
-        <li class="left"><a class="brand-logo" href=""> Neighborhood Map</a></li>
-        <li class="right hide-on-small-only"><a class="btn" href="">Login</a></li>
-        <li class="hide-on-large-only hide-on-small-only"><a class="btn" href="">View Locations</a></li>
-        <a href="#" class="sidenav-trigger show-on-small" data-target="location-list-mobile">
-            <i class="material-icons">menu</i>
-          </a>
-      </ul>
-      
-    </nav>
-  </header>
-  <!--Body with Map & Sidebar-->
-  <main class=" row main__body">
-    <!--Sidebar with Locations & Search Filter-->
-    <aside class="hide-on-med-and-down col l3 m2 s0 red">
-      <h4>Locations</h4>
-      <input class="" data-bind="textInput: searchItem, vslueUpdate: 'afterkeydown'" type="text" placeholder="Filter Locations...">
-      <ul class="" data-bind="foreach: locationList">
-        <li class="" data-bind="text: title, click: show"></li>
-      </ul>
-    </aside>
-    <aside id="location-list-mobile" class="red sidenav">
-    </aside>
-    <!--Google Map with Location Markers-->
-    <section class="map_container col l9 m10 s12 teal">
-      <div id="map">
-      </div>
-    </section>
-  </main>
-  <!--Footer with Social Links-->
-  <footer class="page-footer blue">
-    <div class="container">
-      <a href="">Github</a>
-      <a href="">Linkedin</a>
-    </div>
-  </footer>
+  <!--Bootstrap Fluid Container-->
+  <div class="container-fluid h-100">
 
-  <!--Javascript -->
-  <div id="Javascript">
-    <!--Knockout JS -->
-    <script
-      src="assets/js/lib/knockout-3.4.2.js" >
-    </script>
-    <!--jQuery -->
-    <script
-      src="assets/js/lib/jquery-3.3.1.min.js">
-    </script>
-    <!--Materialize JS -->
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js">
-    </script>
-    <!--App JS -->
-    <script
-      src="assets/js/app.js">
-    </script>
-    <!--Google Maps -->
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCsW0ZcgyupqWcJmlcbz7escetwpOCm40&libraries=geometry&v=3&callback=initMap"
-      onerror="googleMapError()">
-    </script>
-    <script>
-      $(document).ready(function(){
-        $('.sidenav').sidenav();
-      });
-    </script>
+    <!--Bootstrap Row-->
+    <div class="row h-100">
+
+      <!--Body with Map & Sidebar-->
+      <main class=" sidebar__column col p-0 navbar-inverse">
+        <a href="" class="  float-right m-3 navbar-light" data-target="#sidebar" data-toggle="collapse">
+          <span class="navbar-toggler-icon"></span>
+        </a>
+
+        <!--Google Map with Location Markers-->
+        <section class="content bg-inverse">
+          <div id="map">
+              <p class="map_error"></p>
+          </div>
+        </section>
+
+      </main>
+
+      <!--Sidebar with Locations & Search Filter-->
+      <aside id="sidebar" class="col-2 collapse bg-inverse pt-2 h-100 sidebar__width">
+        <h4 class="sidebar__header text-white">Neighberhood Map</h4>
+        <!--Search Input-->
+        <input class="sidebar__search" data-bind="textInput: searchOption, valueUpdate: afterkeydown" type="text" placeholder="Filter Locations...">
+        <hr class="sidebar__hr">
+        <!--Location List-->
+        <ul class=" nav flex-column" data-bind="foreach: locationsFilter">
+          <!--Location List Item-->
+          <li class="nav-item  sidebar__list" data-bind="text: title, click: $parent.populateAndBounceMarker">
+          </li>
+        </ul>
+      </aside>
+
+    </div>
+
   </div>
+
+  <!--Knockout JS -->
+  <script
+    src="assets/js/lib/knockout-3.4.2.js" >
+  </script>
+  <!--jQuery -->
+  <script
+    src="assets/js/lib/jquery-3.3.1.min.js">
+  </script>
+  <!--Bootstrap JS -->
+  <script
+    src="assets/js/lib/bootstrap.min.js">
+  </script>
+  <!--App JS -->
+  <script
+    src="assets/js/app.js">
+  </script>
+  <!--Responsive Design-->
+  <script 
+  src="/assets/js/lib/responsive.js">
+  </script>
+  <!--Google Maps -->
+  <script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCsW0ZcgyupqWcJmlcbz7escetwpOCm40&libraries=geometry&v=3&callback=startApp"
+    onerror="googleMapError()">
+  </script>
 </body>
 </html>
